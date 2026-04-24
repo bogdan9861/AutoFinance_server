@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum fuelType {
+  PETROL
+  DIESEL
+  ELECTRO
+  HYBRID
+}
+
+enum expenceType {
+  FUEL
+  MAINTANCE
+  REPAIR
+  INSURANCE
+  TAXES
+  PARKING
+  CHARGING
+}
+
+enum maintanceType {
+  OIL_CHANGE
+  FILTER_CHANGE
+  BRAKE_SERVICE
+  TIRE_SERVICE
+  DIAGNOSTICS
+  REPAIR
+  PLANNED
+  OTHER
+}
+
+enum maintanceStatus {
+  completed
+  planned
+  cancelled
+}
+
+model User {
+  id               String   @id @default(ulid())
+  name             String
+  email            String
+  password         String
+  image            String?
+  registrationDate DateTime @default(now())
+
+  autos       Auto[]
+  expencesses Expencess[]
+  maintances  Maintance[]
+}
+
+model Auto {
+  id                String  @id @default(ulid())
+  mark              String
+  model             String
+  year              Int
+  number            String
+  mileageKM         Int?    @default(0)
+  consumption       Float
+  maintanceDistance Int     @default(10000)
+  distanceCovered   Int     @default(0)
+  image             String?
+
+  fuelType fuelType
+  color    String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  expencesses Expencess[]
+  maintances  Maintance[]
+}
+
+model Expencess {
+  id          String      @id @default(ulid())
+  price       Int
+  type        expenceType
+  date        DateTime    @default(now())
+  place       String?
+  description String?
+
+  auto   Auto   @relation(fields: [autoId], references: [id], onDelete: Cascade)
+  autoId String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
+model Maintance {
+  id                     String          @id @default(ulid())
+  price                  Int
+  type                   maintanceType
+  date                   DateTime        @default(now())
+  nextMaintanceMillageKM Int?
+  place                  String?
+  description            String?
+  masterName             String?
+  status                 maintanceStatus @default(completed)
+
+  auto   Auto?  @relation(fields: [autoId], references: [id], onDelete: Cascade)
+  autoId String
+
+  user   User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}

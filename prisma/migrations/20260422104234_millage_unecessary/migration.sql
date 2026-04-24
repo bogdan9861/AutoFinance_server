@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Auto` MODIFY `mileageKM` INTEGER NULL DEFAULT 0;
