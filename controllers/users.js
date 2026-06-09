@@ -140,7 +140,7 @@ const changePassword = async (req, res) => {
 
     const isPasswordCorrect = await bcrypt.compare(
       currentPassword,
-      req.user.password
+      req.user.password,
     );
 
     if (!isPasswordCorrect) {
@@ -168,9 +168,11 @@ const changePassword = async (req, res) => {
 
 const removeUser = async (req, res) => {
   try {
+    const { id } = req.params;
+
     await prisma.user.delete({
       where: {
-        id: req.user.id,
+        id,
       },
     });
 
@@ -182,6 +184,16 @@ const removeUser = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Unknown server error" });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -189,4 +201,5 @@ module.exports = {
   edit,
   removeUser,
   changePassword,
+  getAllUsers,
 };

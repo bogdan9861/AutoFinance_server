@@ -1,33 +1,48 @@
 const { prisma } = require("../prisma/prisma.client");
+const uploadFile = require("../utlls/uploadFile");
 
 const createExpence = async (req, res) => {
   try {
     const { price, type, date, description, autoId, place } = req.body;
 
-    const expence = await prisma.expencess.create({
-      data: {
-        auto: {
-          connect: {
-            id: autoId,
+    const prismaCreateExpence = async (url) => {
+      const expence = await prisma.expencess.create({
+        data: {
+          auto: {
+            connect: {
+              id: autoId,
+            },
           },
-        },
-        user: {
-          connect: {
-            id: req.user.id,
+          user: {
+            connect: {
+              id: req.user.id,
+            },
           },
+          price: Number(price),
+          type,
+          date,
+          description,
+          place,
+          fileUrl: url || "",
         },
-        price: Number(price),
-        type,
-        date,
-        description,
-        place,
-      },
-      include: {
-        auto: true,
-      },
-    });
+        include: {
+          auto: true,
+        },
+      });
+      res.status(200).json(expence);
+    };
 
-    res.status(200).json(expence);
+    if (req?.file?.path) {
+      uploadFile(req?.file?.path)
+        .then(({ url }) => {
+          prismaCreateExpence(url);
+        })
+        .catch((e) => {
+          return res.status(500).json({ message: "Failed to upload file" });
+        });
+    } else {
+      prismaCreateExpence();
+    }
   } catch (error) {
     console.log(error);
 
@@ -48,23 +63,38 @@ const editExpence = async (req, res) => {
       return res.status(404).json({ message: "Не удалось найти расход" });
     }
 
-    const updateedExpence = await prisma.expencess.update({
-      where: {
-        id,
-      },
-      data: {
-        autoId: autoId || expence.autoId,
-        price: Number(price) || expence.price,
-        type: type || expence.price,
-        date: date || expence.date,
-        description: description || expence.description,
-      },
-      include: {
-        auto: true,
-      },
-    });
+    const prismaUpadteExpence = async (url) => {
+      const updateedExpence = await prisma.expencess.update({
+        where: {
+          id,
+        },
+        data: {
+          autoId: autoId || expence.autoId,
+          price: Number(price) || expence.price,
+          type: type || expence.price,
+          date: date || expence.date,
+          description: description || expence.description,
+          fileUrl: url || "",
+        },
+        include: {
+          auto: true,
+        },
+      });
 
-    res.status(200).json(updateedExpence);
+      res.status(200).json(updateedExpence);
+    };
+
+    if (req?.file?.path) {
+      uploadFile(req?.file?.path)
+        .then(({ url }) => {
+          prismaUpadteExpence(url);
+        })
+        .catch((e) => {
+          return res.status(500).json({ message: "Failed to upload file" });
+        });
+    } else {
+      prismaUpadteExpence();
+    }
   } catch (error) {
     console.log(error);
 

@@ -41,6 +41,11 @@ enum maintanceStatus {
   cancelled
 }
 
+enum userRole {
+  ADMIN
+  USER
+}
+
 model User {
   id               String   @id @default(ulid())
   name             String
@@ -48,6 +53,8 @@ model User {
   password         String
   image            String?
   registrationDate DateTime @default(now())
+
+  role userRole @default(USER)
 
   autos       Auto[]
   expencesses Expencess[]
@@ -83,6 +90,8 @@ model Expencess {
   date        DateTime    @default(now())
   place       String?
   description String?
+
+  fileUrl String?
 
   auto   Auto   @relation(fields: [autoId], references: [id], onDelete: Cascade)
   autoId String
