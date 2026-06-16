@@ -159,9 +159,28 @@ const getCars = async (req, res) => {
   }
 };
 
+const getAllCars = async (req, res) => {
+  try {
+    const cars = await prisma.auto.findMany();
+
+    res.status(200).json(cars);
+  } catch (error) {
+    res.status(500).json({ message: "Unknown server error" });
+  }
+};
+
+const sendReport = async (req, res) => {
+  try {
+   
+  } catch (error) {
+    res.status(500).json({ message: "Unknown server error" });
+  }
+};
+
 module.exports = {
   createCar,
   editCar,
   removeCar,
   getCars,
+  getAllCars,
 };

@@ -139,9 +139,20 @@ const getExpences = async (req, res) => {
   }
 };
 
+const getAllExpences = async (req, res) => {
+  try {
+    const expences = await prisma.expencess.findMany();
+
+    res.status(200).json(expences);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   createExpence,
   editExpence,
   removeExpence,
   getExpences,
+  getAllExpences,
 };

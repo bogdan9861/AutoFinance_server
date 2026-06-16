@@ -44,6 +44,7 @@ enum maintanceStatus {
 enum userRole {
   ADMIN
   USER
+  ACCOUNTANT
 }
 
 model User {
@@ -116,4 +117,11 @@ model Maintance {
 
   user   User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
+}
+
+model Report {
+  id        String   @id @default(ulid())
+  name      String
+  fileUrl   String
+  createdAt DateTime @default(now())
 }

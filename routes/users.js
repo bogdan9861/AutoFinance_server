@@ -19,6 +19,7 @@ router.post("/login", login);
 router.get("/", auth, current);
 router.get("/all", auth, getAllUsers);
 router.put("/", auth, fileMiddleware.single("image"), edit);
+router.get("/all", auth, getAllUsers);
 router.delete("/:id", auth, removeUser);
 router.put("/change-password", auth, changePassword);
 

@@ -28,5 +28,6 @@ app.use("/api/notifications", require("./routes/notifications"));
 app.use("/api/dashboard", require("./routes/dashboard"));
 app.use("/api/expencess", require("./routes/expencess"));
 app.use("/api/maintance", require("./routes/maintance"));
+app.use("/api/reports", require("./routes/reports"));
 
 module.exports = app;
